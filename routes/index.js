@@ -1,10 +1,17 @@
 const express = require("express");
 var router = express.Router();
 
+const rateLimit = require("express-rate-limit");
+ 
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: process.env.REQUEST_RATE_LIMIT 
+});
+
 const { sendMail } = require('../utils/mailer');
 
 /* GET home page. */
-router.get('/sayhi/:to', function (req, res, next) {
+router.get('/sayhi/:to', apiLimiter, function (req, res, next) {
   const { to } = req.params;
 
   try {
